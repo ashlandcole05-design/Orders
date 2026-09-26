@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#222222">
+
+<title>Restaurant Order</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    color: #222;
+}
+
+#mainApp {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+
+/* TABLE */
+
+.table-section,
+.tables-section,
+.order-section {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.table-input {
+    display: flex;
+    gap: 10px;
+}
+
+.table-input input {
+    flex: 1;
+    padding: 13px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.table-input button {
+    padding: 13px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-weight: bold;
+}
+
+
+/* TABLE LIST */
+
+#tablesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.table-button {
+    padding: 12px 17px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.table-button.active {
+    background: #222;
+    color: white;
+}
+
+
+.current-table {
+    padding: 15px;
+    margin-bottom: 18px;
+    background: #222;
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+/* CATEGORIES */
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.categories button {
+    padding: 10px 13px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    font-weight: bold;
+}
+
+
+/* MENU */
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    margin-bottom: 25px;
+}
+
+.menu-item {
+    min-height: 60px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+    font-size: 14px;
+}
+
+
+/* ORDER */
+
+.order-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.item-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-controls button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    font-size: 20px;
+}
+
+.note-input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+
+/* ORDER BUTTONS */
+
+.order-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.order-buttons button {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+}
+
+.close-table-btn {
+    background: #444;
+}
+
+.clear-table-btn {
+    background: #b00020;
+}
+
+.kot-btn {
+    background: #0066cc;
+}
+
+
+/* KOT */
+
+#kotScreen {
+    display: none;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    min-height: 100vh;
+}
+
+#kotScreen h1 {
+    text-align: center;
+    border-bottom: 2px solid #222;
+    padding-bottom: 15px;
+}
+
+#kotTable {
+    text-align: center;
+}
+
+.kot-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.kot-item-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.kot-note {
+    margin-top: 6px;
+    font-size: 14px;
+    font-style: italic;
+}
+
+#kotScreen > button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+}
+
+
+/* PHONE */
+
+@media (max-width: 600px) {
+
+    .table-input {
+        flex-direction: column;
+    }
+
+    .table-input button {
+        width: 100%;
+    }
+
+    .order-buttons {
+        flex-direction: column;
+    }
+
+    .order-buttons button {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="mainApp">
+
+<header>
+    <h1>Restaurant Order</h1>
+</header>
+
+
+<!-- TABLE -->
+
+<section class="table-section">
+
+    <h2>Enter Table</h2>
+
+    <div class="table-input">
+
+        <input
+            type="text"
+            id="tableNumber"
+            placeholder="Enter table number"
+        >
+
+        <button onclick="openTable()">
+            OPEN TABLE
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- SAVED TABLES -->
+
+<section class="tables-section">
+
+    <h2>TABLES</h2>
+
+    <div id="tablesList">
+        <p>No saved tables.</p>
+    </div>
+
+</section>
+
+
+<!-- CURRENT TABLE -->
+
+<div id="currentTableBox"
+     class="current-table">
+
+    No table selected
+
+</div>
+
+
+<!-- CATEGORIES -->
+
+<div class="categories">
+
+<button onclick="showCategory('Starters')">Starters</button>
+
+<button onclick="showCategory('Soup')">Soup</button>
+
+<button onclick="showCategory('Salad & Tauh')">Salad & Tauh</button>
+
+<button onclick="showCategory('Main Dishes')">Main Dishes</button>
+
+<button onclick="showCategory('Seafood & Fish')">Seafood & Fish</button>
+
+<button onclick="showCategory('Pork')">Pork</button>
+
+<button onclick="showCategory('Beef')">Beef</button>
+
+<button onclick="showCategory('Chicken')">Chicken</button>
+
+<button onclick="showCategory('Milkshake')">Milkshake</button>
+
+<button onclick="showCategory('Hot Beverage')">Hot Beverage</button>
+
+<button onclick="showCategory('Desserts')">Desserts</button>
+
+<button onclick="showCategory('Cold Drinks')">Cold Drinks</button>
+
+<button onclick="showCategory('Beer')">Beer</button>
+
+</div>
+
+
+<!-- MENU -->
+
+<h2>Menu</h2>
+
+<div id="menu" class="menu">
+
+    <p>Select a category.</p>
+
+</div>
+
+
+<!-- ORDER -->
+
+<section class="order-section">
+
+<h2>Current Order</h2>
+
+<div id="order">
+
+    <p>Open a table first.</p>
+
+</div>
+
+<div id="orderTotal"></div>
+
+
+<div class="order-buttons">
+
+<button
+    class="close-table-btn"
+    onclick="closeTable()">
+
+    CLOSE TABLE
+
+</button>
+
+
+<button
+    class="clear-table-btn"
+    onclick="clearTable()">
+
+    CLEAR TABLE
+
+</button>
+
+
+<button
+    class="kot-btn"
+    onclick="showKOT()">
+
+    KOT
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- KOT -->
+
+<div id="kotScreen">
+
+<h1>KITCHEN ORDER TICKET</h1>
+
+<h2 id="kotTable"></h2>
+
+<div id="kotItems"></div>
+
+<button onclick="closeKOT()">
+
+    BACK
+
+</button>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   MENU
+========================= */
+
+const menuData = {
+
+"Starters": [
+    "Stir-Fried Sweet Corn",
+    "French Fries",
+    "Letphetouh",
+    "Green Papaya Tauh"
+],
+
+"Soup": [
+    "Tomyum Soup",
+    "Fish Head Soup",
+    "Thai Mushroom Soup",
+    "Beef Clear Soup",
+    "Chicken Soup"
+],
+
+"Salad & Tauh": [
+    "Mixed Pork Salad",
+    "Beef Salad",
+    "Mohinggatauh",
+    "Chicken Feet Salad"
+],
+
+"Main Dishes": [
+
+    "Malachankaw - Chicken",
+    "Malachankaw - Pork",
+    "Malachankaw - Seafood",
+
+    "Mala Mao Cai",
+
+    "Sanpiou",
+
+    "Beef Garlic Oil Rice",
+
+    "Noodle - Chicken",
+    "Noodle - Pork",
+    "Noodle - Prawn",
+
+    "Garlic Oil Noodles",
+    "Shan Noodles",
+    "Clay Pot Noodles Soup",
+
+    "Chinese Rice - Chicken",
+    "Chinese Rice - Pork",
+
+    "USA Rice",
+
+    "Malay Rice - Chicken",
+    "Malay Rice - Pork",
+    "Malay Rice - Prawn",
+
+    "Plain Rice"
+],
+
+"Seafood & Fish": [
+
+    "Seafood Plate",
+    "Thai Style Fish Curry",
+    "Steamed Fish Spicy Lemon Sauce",
+    "Octopus Mala",
+    "Tempura Prawn"
+],
+
+"Pork": [
+
+    "Pork Curry Spicy",
+    "Crispy Pork Belly",
+    "Grilled Pork Ribs Curry"
+
+],
+
+"Beef": [
+
+    "Fried Beef",
+    "Grilled Beef",
+    "Spicy Crispy Beef"
+
+],
+
+"Chicken": [
+
+    "Crispy Dry Chicken",
+    "Chicken Wings",
+    "Crispy Chicken Skin",
+    "Kung Pao Chicken",
+    "Spicy Chicken",
+    "Chicken Curry"
+
+],
+
+"Milkshake": [
+
+    "Blueberry Milkshake",
+    "Strawberry Milkshake",
+    "Chocolate Milkshake",
+    "Banana Milkshake"
+
+],
+
+"Hot Beverage": [
+
+    "White Coffee",
+    "Hot Chocolate",
+    "Cappuccino"
+
+],
+
+"Desserts": [
+
+    "Chocolate Ice Cream",
+    "Strawberry Ice Cream",
+    "Vanilla Ice Cream",
+    "Fruit Salad with Ice Cream"
+
+],
+
+"Cold Drinks": [
+
+    "7UP",
+    "Coke",
+    "Pepsi",
+    "Sprite",
+    "Mirinda",
+    "Fanta",
+    "Mountain Dew",
+
+    "Monster Pink",
+    "Monster Black",
+    "Monster White",
+
+    "Red Bull Pink",
+    "Red Bull Blue",
+    "Red Bull Sugar-Free"
+
+],
+
+"Beer": [
+
+    "Kingfisher"
+
+]
+
+};
+
+
+
+/* =========================
+   TABLE DATA
+========================= */
+
+let tables = {};
+
+let currentTable = null;
+
+
+
+/* =========================
+   OPEN TABLE
+========================= */
+
+function openTable() {
+
+    const input =
+        document.getElementById("tableNumber");
+
+    const number =
+        input.value.trim();
+
+
+    if (!number) {
+
+        alert("Please enter a table number.");
+
+        return;
+    }
+
+
+    if (!tables[number]) {
+
+        tables[number] = {};
+
+    }
+
+
+    currentTable = number;
+
+    input.value = "";
+
+
+    showCurrentTable();
+
+    showOrder();
+
+    showTables();
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   SHOW TABLES
+========================= */
+
+function showTables() {
+
+    const list =
+        document.getElementById("tablesList");
+
+    list.innerHTML = "";
+
+
+    const numbers =
+        Object.keys(tables);
+
+
+    if (numbers.length === 0) {
+
+        list.innerHTML =
+            "<p>No saved tables.</p>";
+
+        return;
+
+    }
+
+
+    numbers.sort(function(a, b) {
+
+        return Number(a) - Number(b);
+
+    });
+
+
+    numbers.forEach(function(number) {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "table-button";
+
+
+        if (number === currentTable) {
+
+            button.classList.add("active");
+
+        }
+
+
+        button.textContent =
+            "Table " + number;
+
+
+        button.onclick = function() {
+
+            openSavedTable(number);
+
+        };
+
+
+        list.appendChild(button);
+
+    });
+
+}
+
+
+
+/* =========================
+   OPEN SAVED TABLE
+========================= */
+
+function openSavedTable(number) {
+
+    if (!tables[number]) {
+
+        return;
+
+    }
+
+
+    currentTable = number;
+
+
+    showCurrentTable();
+
+    showOrder();
+
+    showTables();
+
+}
+
+
+
+/* =========================
+   CURRENT TABLE
+========================= */
+
+function showCurrentTable() {
+
+    const box =
+        document.getElementById("currentTableBox");
+
+
+    if (!currentTable) {
+
+        box.textContent =
+            "No table selected";
+
+        return;
+
+    }
+
+
+    box.textContent =
+        "Currently serving: Table " +
+        currentTable;
+
+}
+
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+function showCategory(category) {
+
+    const menu =
+        document.getElementById("menu");
+
+    menu.innerHTML = "";
+
+
+    menuData[category].forEach(function(name) {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "menu-item";
+
+        button.textContent =
+            name;
+
+
+        button.onclick = function() {
+
+            addItem(name);
+
+        };
+
+
+        menu.appendChild(button);
+
+    });
+
+}
+
+
+
+/* =========================
+   ADD ITEM
+========================= */
+
+function addItem(name) {
+
+    if (!currentTable) {
+
+        alert("Please open a table first.");
+
+        return;
+
+    }
+
+
+    const order =
+        tables[currentTable];
+
+
+    if (order[name]) {
+
+        order[name].quantity++;
+
+    } else {
+
+        order[name] = {
+
+            quantity: 1,
+
+            note: ""
+
+        };
+
+    }
+
+
+    showOrder();
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   SHOW ORDER
+========================= */
+
+function showOrder() {
+
+    const container =
+        document.getElementById("order");
+
+    const total =
+        document.getElementById("orderTotal");
+
+
+    container.innerHTML = "";
+
+    total.innerHTML = "";
+
+
+    if (!currentTable) {
+
+        container.innerHTML =
+            "<p>Open a table first.</p>";
+
+        return;
+
+    }
+
+
+    const order =
+        tables[currentTable];
+
+
+    const names =
+        Object.keys(order);
+
+
+    if (names.length === 0) {
+
+        container.innerHTML =
+            "<p>No items ordered yet.</p>";
+
+        return;
+
+    }
+
+
+    let totalItems = 0;
+
+
+    names.forEach(function(name) {
+
+        const item =
+            order[name];
+
+
+        totalItems += item.quantity;
+
+
+        const box =
+            document.createElement("div");
+
+        box.className =
+            "order-item";
+
+
+        box.innerHTML = `
+
+            <div class="order-item-top">
+
+                <span class="item-name">
+                    ${escapeHTML(name)}
+                </span>
+
+                <div class="quantity-controls">
+
+                    <button
+                        onclick="removeItem('${escapeJS(name)}')">
+                        −
+                    </button>
+
+                    <span>
+                        ${item.quantity}
+                    </span>
+
+                    <button
+                        onclick="addItem('${escapeJS(name)}')">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+            <input
+                class="note-input"
+                type="text"
+                placeholder="Special instruction"
+                value="${escapeHTML(item.note || "")}"
+                oninput="updateNote(
+                    '${escapeJS(name)}',
+                    this.value
+                )"
+            >
+
+        `;
+
+
+        container.appendChild(box);
+
+    });
+
+
+    total.textContent =
+        "Total Items: " + totalItems;
+
+}
+
+
+
+/* =========================
+   REMOVE ITEM
+========================= */
+
+function removeItem(name) {
+
+    if (!currentTable) {
+
+        return;
+
+    }
+
+
+    const order =
+        tables[currentTable];
+
+
+    if (!order[name]) {
+
+        return;
+
+    }
+
+
+    order[name].quantity--;
+
+
+    if (order[name].quantity <= 0) {
+
+        delete order[name];
+
+    }
+
+
+    showOrder();
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   NOTE
+========================= */
+
+function updateNote(name, note) {
+
+    if (!currentTable) {
+
+        return;
+
+    }
+
+
+    if (!tables[currentTable][name]) {
+
+        return;
+
+    }
+
+
+    tables[currentTable][name].note =
+        note;
+
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   CLOSE TABLE
+========================= */
+
+function closeTable() {
+
+    if (!currentTable) {
+
+        alert("Please open a table first.");
+
+        return;
+
+    }
+
+
+    const number =
+        currentTable;
+
+
+    currentTable = null;
+
+
+    showCurrentTable();
+
+    showOrder();
+
+    showTables();
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   CLEAR TABLE
+========================= */
+
+function clearTable() {
+
+    if (!currentTable) {
+
+        alert("Please open a table first.");
+
+        return;
+
+    }
+
+
+    const number =
+        currentTable;
+
+
+    if (!confirm(
+        "Clear Table " +
+        number +
+        " completely?"
+    )) {
+
+        return;
+
+    }
+
+
+    delete tables[number];
+
+
+    currentTable = null;
+
+
+    showCurrentTable();
+
+    showOrder();
+
+    showTables();
+
+    saveTables();
+
+}
+
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveTables() {
+
+    localStorage.setItem(
+        "restaurantTables",
+        JSON.stringify(tables)
+    );
+
+}
+
+
+
+/* =========================
+   LOAD
+========================= */
+
+function loadTables() {
+
+    const saved =
+        localStorage.getItem(
+            "restaurantTables"
+        );
+
+
+    if (saved) {
+
+        try {
+
+            tables =
+                JSON.parse(saved);
+
+        } catch {
+
+            tables = {};
+
+        }
+
+    }
+
+
+    currentTable = null;
+
+
+    showTables();
+
+    showCurrentTable();
+
+}
+
+
+
+/* =========================
+   KOT
+========================= */
+
+function showKOT() {
+
+    if (!currentTable) {
+
+        alert("Please open a table first.");
+
+        return;
+
+    }
+
+
+    const order =
+        tables[currentTable];
+
+
+    const names =
+        Object.keys(order);
+
+
+    if (names.length === 0) {
+
+        alert("There are no items in this order.");
+
+        return;
+
+    }
+
+
+    document.getElementById("kotTable")
+        .textContent =
+        "Table " + currentTable;
+
+
+    const container =
+        document.getElementById("kotItems");
+
+
+    container.innerHTML = "";
+
+
+    names.forEach(function(name) {
+
+        const item =
+            order[name];
+
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "kot-item";
+
+
+        let html = `
+
+            <div class="kot-item-name">
+
+                ${item.quantity}
+                ×
+                ${escapeHTML(name)}
+
+            </div>
+
+        `;
+
+
+        if (item.note) {
+
+            html += `
+
+                <div class="kot-note">
+
+                    Note:
+                    ${escapeHTML(item.note)}
+
+                </div>
+
+            `;
+
+        }
+
+
+        div.innerHTML = html;
+
+
+        container.appendChild(div);
+
+    });
+
+
+    document.getElementById("mainApp")
+        .style.display = "none";
+
+
+    document.getElementById("kotScreen")
+        .style.display = "block";
+
+}
+
+
+
+/* =========================
+   BACK FROM KOT
+========================= */
+
+function closeKOT() {
+
+    document.getElementById("kotScreen")
+        .style.display = "none";
+
+
+    document.getElementById("mainApp")
+        .style.display = "block";
+
+}
+
+
+
+/* =========================
+   SAFETY
+========================= */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function escapeJS(text) {
+
+    return String(text)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+
+}
+
+
+
+/* =========================
+   START
+========================= */
+
+loadTables();
+
+</script>
+
+</body>
+</html>
